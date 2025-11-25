@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jesus-luyo-back-service
+  labels:
+    app: jesus-luyo-maintenance
+    tier: backend
+    owner: jesus-luyo
+spec:
+  type: LoadBalancer
+  selector:
+    app: jesus-luyo-maintenance
+  ports:
+    - protocol: TCP
+      port: 5007
+      targetPort: 5007
+  sessionAffinity: None

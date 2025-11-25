@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jesus-luyo-backdeployment
+  labels:
+    app: jesus-luyo-maintenance
+    tier: backend
+    owner: jesus-luyo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: jesus-luyo-maintenance
+  template:
+    metadata:
+      labels:
+        app: jesus-luyo-maintenance
+        tier: backend
+        owner: jesus-luyo
+    spec:
+      containers:
+      - name: jesus-luyo-maintenance-container
+        image: vidalluyo0/vg-ms-psychology-welfare:1.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5007
+          name: http
+          protocol: TCP
+        env:
+        - name: SERVER_PORT
+          value: "5007"
+        - name: SPRING_PROFILES_ACTIVE
+          value: "prod"
+        - name: TZ
+          value: "America/Lima"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        # Liveness probe - verifica si el contenedor está vivo
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 5007
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        # Readiness probe - verifica si el contenedor está listo para recibir tráfico
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 5007
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3

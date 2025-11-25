@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jesus-luyo-front-deployment
+  labels:
+    app: jesus-luyo-web
+    tier: frontend
+    owner: jesus-luyo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: jesus-luyo-web
+  template:
+    metadata:
+      labels:
+        app: jesus-luyo-web
+        tier: frontend
+        owner: jesus-luyo
+    spec:
+      containers:
+      - name: jesus-luyo-web-container
+        image: vidalluyo0/sigei:1.0     
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        env:
+        - name: TZ
+          value: "America/Lima"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        # Liveness probe - verifica si Nginx está respondiendo
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        # Readiness probe - verifica si el frontend está listo
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3

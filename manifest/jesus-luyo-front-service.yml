@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jesus-luyo-web-service
+  labels:
+    app: jesus-luyo-web
+    tier: frontend
+    owner: jesus-luyo
+spec:
+  type: LoadBalancer
+  selector:
+    app: jesus-luyo-web
+  ports:
+    - protocol: TCP
+      port: 5173
+      targetPort: 80
+  sessionAffinity: None

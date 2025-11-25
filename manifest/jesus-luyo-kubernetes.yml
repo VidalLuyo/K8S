@@ -1,0 +1,110 @@
+# consultar versión de minikube
+minikube version
+
+# consultar si minikube esta en start o stop
+minikube status
+
+# iniciar clúster kubernetes
+minikube start
+
+# ingressar a la carpeta de los manifiestos de kubernetes (manifest)
+cd manifest
+
+# listar namespace
+kubectl get namespace
+kubectl get ns
+
+# Solo crea
+kubectl create namespace [nombre]
+kubectl apply (crea y/o actualiza)
+
+# crear un namespace "jesus-luyo" por comando mediante un archivo: "jesus-luyo-namespace.yml"
+kubectl apply -f jesus-luyo-namespace.yml
+
+# crear un secret "credentials" dentro del namespace "jesus-luyo" por comando mediante un archivo: "jesus-luyo-back-secret.yml"
+kubectl apply -f jesus-luyo-secret.yml
+
+# crear un service "api-ai-be" dentro del namespace "jesus-luyo" por comando mediante un archivo: "jesus-luyo-back-service.yml"
+kubectl apply -f jesus-luyo-back-service.yml
+
+# crear un deployment "api-ai-be" dentro del namespace "jesus-luyo" por comando mediante un archivo: "jesus-luyo-back-deployment.yml"
+kubectl apply -f jesus-luyo-back-deployment.yml
+
+# crear un service "api-ai-be" dentro del namespace "jesus-luyo" por comando mediante un archivo: "jesus-luyo-back-service.yml"
+kubectl apply -f jesus-luyo-front-service.yml
+
+# crear un deployment "api-ai-be" dentro del namespace "jesus-luyo" por comando mediante un archivo: "jesus-luyo-back-deployment.yml"
+kubectl apply -f jesus-luyo-front-deployment.yml
+
+
+# consultar namespace en uso por "default" | LINUX
+kubectl config view --minify | grep namespace
+
+# consultar namespace en uso por "default" | WINDOWS
+kubectl config view --minify | findstr namespace
+
+
+
+# cambiar un namespace en uso por "default" a "jesus-luyo"
+kubectl config set-context --current --namespace=jesus-luyo
+
+
+
+# consultar todos los recursos de un namespace "jesus-luyo"
+kubectl get all -n default
+
+# consultar todos los recursos y secret de un namespace "jesus-luyo"
+kubectl get all,secrets -n default
+
+# listar services del namespace "jesus-luyo"
+minikube service api-ai-be -n default
+minikube service list
+
+# probar el microservicio dentro del clúster con curl (MINIKUBE)
+curl http://192.168.49.2:30563/v1/api/
+curl http://192.168.49.2:30563/actuator/health
+
+# crear un túnel de puerto la máquina local (host) y el clúster de Kubernetes
+kubectl port-forward service/api-ai-be 8085:30563 -n default
+
+kubectl port-forward service/jesus-luyo-back-service 8085:5007 -n default
+
+kubectl port-forward service/jesus-luyo-web-service 8080:80 -n default
+
+#Ver pods
+kubectl get pods -n default
+
+# ver los logs del pod (logs del proyecto)
+kubectl logs nombre-pod -n jesus-luyo
+
+
+
+
+# aplicar todos los manifiestos a la vez
+kubectl apply -f jesus-luyo-back-namespace.yml -f jesus-luyo-secret.yml -f jesus-luyo-service.yml -f jesus-luyo-back-deployment.yml
+
+kubectl apply -f jesus-luyo-back-service.yml -f jesus-luyo-back-deployment.yml
+
+
+# ============================================
+# COMANDOS PARA MODO LOCAL (DOCKER COMPOSE)
+# ============================================
+
+# levantar el contenedor en modo local
+docker-compose -f docker-compose.yml up -d
+
+# ver logs del contenedor
+docker-compose -f docker-compose.yml logs -f
+
+# detener y eliminar el contenedor
+docker-compose -f docker-compose.yml down
+
+# ver estado de los contenedores
+docker-compose -f docker-compose.yml ps
+
+# probar el microservicio en modo local
+curl http://localhost:8085/v1/api/instagram/historial
+curl http://localhost:8085/actuator/health
+
+# reiniciar el servicio
+docker-compose -f docker-compose.yml restart
